@@ -27,6 +27,7 @@ function DiskStorage (opts) {
 
 DiskStorage.prototype._handleFile = function _handleFile (req, file, cb) {
   var that = this
+  var hash = crypto.createHash('sha512')
 
   that.getDestination(req, file, function (err, destination) {
     if (err) return cb(err)
@@ -39,12 +40,16 @@ DiskStorage.prototype._handleFile = function _handleFile (req, file, cb) {
 
       file.stream.pipe(outStream)
       outStream.on('error', cb)
+      file.stream.on('data', function (chunk) {
+        hash.update(chunk)
+      })
       outStream.on('finish', function () {
         cb(null, {
           destination: destination,
           filename: filename,
           path: finalPath,
-          size: outStream.bytesWritten
+          size: outStream.bytesWritten,
+          hash: hash.digest(hex)
         })
       })
     })
