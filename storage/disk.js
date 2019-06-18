@@ -49,7 +49,7 @@ DiskStorage.prototype._handleFile = function _handleFile (req, file, cb) {
           filename: filename,
           path: finalPath,
           size: outStream.bytesWritten,
-          hash: hash.digest(hex)
+          hash: hash.digest('hex')
         })
       })
     })
